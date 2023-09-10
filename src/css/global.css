@@ -1,0 +1,26 @@
+html,
+body,
+#root {
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  background-color: unset !important;
+}
+
+
+
+.hover-blue:hover {
+  background-color: #4262FF;
+}
+
+
+.ellipsis {
+  white-space: nowrap;
+  /* 不换行 */
+  overflow: hidden;
+  /* 超出部分隐藏 */
+  text-overflow: ellipsis;
+  /* 显示省略号 */
+}

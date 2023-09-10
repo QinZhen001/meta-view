@@ -1,4 +1,4 @@
-import { Direction, IShape, Position, EnumRtcLayout } from "../types";
+import { Direction, IShape, Position } from "../types";
 import { Modal } from 'antd';
 import { useMap } from "./hooks";
 

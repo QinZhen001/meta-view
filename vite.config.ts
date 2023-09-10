@@ -5,11 +5,10 @@ import commonjs from 'vite-plugin-commonjs'
 import svgr from "vite-plugin-svgr";
 
 
-
 const genBaseUrl = (mode) => {
   switch (mode) {
     case "production":
-      return "/web-meta/"
+      return "/meta-view/"
     default:
       return "/"
   }

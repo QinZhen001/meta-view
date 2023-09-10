@@ -1,13 +1,13 @@
-import Figure from "../../components/Figure";
+import Figure from "../../../components/Figure";
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { RootState } from '../../../store';
 import "./index.scss"
 
 const FigureView = () => {
   const position = useSelector((state: RootState) => state.globalInfo.position);
   const remoteUserPayloads = useSelector((state: RootState) => state.globalInfo.remoteUserPayloads);
   const direction = useSelector((state: RootState) => state.globalInfo.direction);
-  const uid = useSelector((state: RootState) => state.globalInfo.uid);
+  const { uid } = useSelector((state: RootState) => state.globalInfo.info);
 
   return < >
     <Figure

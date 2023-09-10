@@ -197,8 +197,8 @@ export const usePositionClient = () => {
   // const dispatch = useDispatch()
   const position = useSelector((state: RootState) => state.globalInfo.position)
   const direction = useSelector((state: RootState) => state.globalInfo.direction)
-  const worldId = useSelector((state: RootState) => state.globalInfo.worldId)
-  const uid = useSelector((state: RootState) => state.globalInfo.uid)
+  const info = useSelector((state: RootState) => state.globalInfo.info)
+  const { worldId, uid } = info
   const { scale } = useMap()
 
   useEffect(() => {

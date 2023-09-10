@@ -1,4 +1,4 @@
-import FigureView from "../FigureView"
+import FigureView from "./FigureView"
 import { useMap, useScreenResize, useDirectionKeydown } from "../../utils/hooks"
 import { useEffect, useMemo, useState } from "react"
 import { useSelector } from "react-redux"
@@ -9,7 +9,7 @@ const MapDomView = () => {
   useScreenResize()
   useDirectionKeydown()
   const { bgPositionX, bgPositionY, mapWidth, mapHeight } = useMap()
-
+  
   return <div className="map-view">
     <div className="map-content" style={{
       width: `${mapWidth}px`,

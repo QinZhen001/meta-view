@@ -1,12 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import MapDomView from "../../containers/MapDomView";
+import MapCanvasView from "../../containers/MapCanvasView";
+import { RootState } from "../../store"
 import { usePositionClient, useStore } from "../../utils/hooks"
-import {deleteLocalALL} from "../../utils/storage"
+import { deleteLocalALL } from "../../utils/storage"
+import { useSelector } from "react-redux";
+import { RenderType } from "../../types";
 import "./index.scss"
 
 const MainPage = () => {
+  const { renderType } = useSelector((state: RootState) => state.globalInfo.info);
   const { initPositionClient, joinPositionClient, destoryPositionClient } = usePositionClient()
   const { resetStore } = useStore()
+
 
   useEffect(() => {
     init()
@@ -33,7 +39,7 @@ const MainPage = () => {
 
 
   return <div className="main-page">
-    <MapDomView></MapDomView>
+    {renderType == RenderType.Dom ? <MapDomView></MapDomView> : <MapCanvasView></MapCanvasView>}
   </div>
 
 }

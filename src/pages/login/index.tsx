@@ -39,12 +39,12 @@ const LoginPage = () => {
     setWorldId(e.target.value)
   }
 
-  const onModeChange = (e: RadioChangeEvent) => {
+  const onTypeChange = (e: RadioChangeEvent) => {
     const value = e.target.value;
-    if (value == RenderType.Canvas){
-      return message.info("Canvas mode is not supported yet")
+    if (value == RenderType.Canvas) {
+      message.info("Canvas mode is not supported yet")
     }
-    setRenderType(e.target.value);
+    setRenderType(value);
   }
 
 
@@ -56,7 +56,7 @@ const LoginPage = () => {
       <div className="text">worldId: </div>
       <Input placeholder="Please input worldId" onChange={onChangeWorldId} value={worldId}></Input>
       <div className="text">render mode: </div>
-      <Radio.Group onChange={onModeChange} value={renderType}>
+      <Radio.Group onChange={onTypeChange} value={renderType}>
         <Radio value={RenderType.Dom}>Dom</Radio>
         <Radio value={RenderType.Canvas}>Canvas</Radio>
       </Radio.Group>

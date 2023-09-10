@@ -19,7 +19,9 @@
     "react-dom": "^18.2.0",
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.2.1",
-    "redux": "^4.1.2"
+    "redux": "^4.1.2",
+    "gsap": "3.12.2",
+    "pixi.js": "^7.2.4"
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.7",

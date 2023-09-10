@@ -9,9 +9,11 @@ import { getFromLocal, saveToLocal, STORAGE_REMOVE_USERS, STORAGE_INFO } from ".
 interface InitialState {
   position: Position // 当前人位置
   direction: Direction // 方向,
-  uid: number, // 用户id
-  worldId: string // 世界id
-  renderType: RenderType // 渲染类型
+  info: {
+    uid: number, // 用户id
+    worldId: string // 世界id
+    renderType: RenderType // 渲染类型
+  }
   remoteUserPayloads: {
     [uid: string]: UserPayload
   }, // 远端用户位置
@@ -27,9 +29,11 @@ const getInitialState = () => {
 
 
   return {
-    uid: info.uid || getRandomUid(),
-    worldId: info.worldId || DEFAULT_WORLD_ID,
-    renderType: info.renderType || DEFAULT_RENDER_TYPE,
+    info: {
+      uid: info.uid || getRandomUid(),
+      worldId: info.worldId || DEFAULT_WORLD_ID,
+      renderType: info.renderType || DEFAULT_RENDER_TYPE,
+    },
     position: getInitPosition(),
     direction: "down",
     remoteUserPayloads: users,
@@ -45,9 +49,7 @@ export const infoSlice = createSlice({
   initialState: getInitialState(),
   reducers: {
     setInfo: (state, action) => {
-      const { uid, worldId } = action.payload
-      state.uid = uid
-      state.worldId = worldId
+      state.info = action.payload
     },
     setPosition: (state, action) => {
       state.position = action.payload

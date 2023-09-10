@@ -4,17 +4,6 @@ import react from '@vitejs/plugin-react'
 import commonjs from 'vite-plugin-commonjs'
 import svgr from "vite-plugin-svgr";
 
-
-const genBaseUrl = (mode) => {
-  switch (mode) {
-    case "production":
-      return "/meta-view/"
-    default:
-      return "/"
-  }
-}
-
-
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
@@ -23,7 +12,6 @@ export default defineConfig(({ mode }) => {
         icon: true
       }
     })],
-    base: genBaseUrl(mode),
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),

@@ -17,20 +17,15 @@ export class Person {
   personContainer: PIXI.Container = new PIXI.Container()
   nameText: PIXI.Text = new PIXI.Text()
   scale: number = 1
+  direction: Direction = "down"
+  position: Position = [0, 0, 0]
+  // TODO: inited => 
 
   constructor(options: IPersonOptions) {
     this.options = options;
-    // const {}
-    // if(position){
-
-    // }
-    // this.draw({
-    //   position,
-    //   direction
-    // })
   }
 
-  // TODO:scale
+  // TODO: direction position to this 
   async draw(o: IPersonDrawOptions) {
     const { uid = "", app, isMe, } = this.options
     const { position = [0, 0, 0], direction = "down" } = o
@@ -64,6 +59,7 @@ export class Person {
     let renderPosition = this._trans2RenderPosition(position)
     this.personContainer.position.x = renderPosition[0]
     this.personContainer.position.y = renderPosition[1]
+    // TODO: if inited we should not add it again
     app!.stage.addChild(this.personContainer);
   }
 
@@ -71,7 +67,7 @@ export class Person {
     const { position, direction } = options
     if (position) {
       this.runTo(position)
-      this.options.position = position
+      // this.options.position = position
     }
     if (direction) {
       this._transDirection(direction)
@@ -121,7 +117,7 @@ export class Person {
         this.personSprite.texture = texture;
         break
     }
-    this.options.direction = d
+    // this.options.direction = d
   }
 
   private _trans2RenderPosition(p: Position) {

@@ -20,11 +20,12 @@ export interface IPersonOptions {
 export interface IPersonUpdateOptions {
   position?: Position;
   direction?: Direction;
+  scale?: number
 }
 
 export interface RemoteUserPayloads {
   [uid: string]: UserPayload
-} 
+}
 
 
 export type InOutEvents = {

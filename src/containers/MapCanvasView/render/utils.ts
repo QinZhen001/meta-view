@@ -1,9 +1,9 @@
 import * as PIXI from 'pixi.js';
 
-PIXI.Assets.add("down", "/textures/avatar_down.png")
-PIXI.Assets.add("up", "/textures/avatar_up.png")
-PIXI.Assets.add("left", "/textures/avatar_left.png")
-PIXI.Assets.add("right", "/textures/avatar_right.png")
+PIXI.Assets.add("down", "/assets/avatar_down.png")
+PIXI.Assets.add("up", "/assets/avatar_up.png")
+PIXI.Assets.add("left", "/assets/avatar_left.png")
+PIXI.Assets.add("right", "/assets/avatar_right.png")
 
 let __textures = new Map<string, PIXI.Texture>()
 

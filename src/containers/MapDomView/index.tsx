@@ -17,7 +17,6 @@ const MapDomView = () => {
       backgroundPosition: `${bgPositionX}px ${bgPositionY}px`,
     }}>
       <FigureView></FigureView>
-      {/* <RoomMockView></RoomMockView> */}
     </div>
 
   </div>

@@ -1,92 +1,82 @@
+import { Position } from './../../../types/index';
 import { Direction } from '../../../types/index';
 import { getTextures, loadTextures } from './utils';
 import { IPersonOptions, IPersonUpdateOptions } from "./types"
+import { DEFAULT_AVATAR_WIDTH, DEFAULT_AVATAR_HEIGHT, DEFAULT_NAME_HEIGHT } from "../../../utils/constant"
 import * as PIXI from 'pixi.js';
 import gsap from "gsap"
 
 
 
-
-const PERSON_WIDTH = 50;
-const PERSON_HEIGHT = 56;
+// position [x,y] => 为personContainer中personSprite的center坐标
 
 export class Person {
   options: IPersonOptions;
   textures: Record<string, any> = new Map()
   personSprite: PIXI.Sprite = new PIXI.Sprite()
   personContainer: PIXI.Container = new PIXI.Container()
-  circle1?: PIXI.Graphics;
-  circle2?: PIXI.Graphics;
+  nameText: PIXI.Text = new PIXI.Text()
+  scale: number = 1
 
   constructor(options: IPersonOptions) {
     this.options = options;
-    this.init()
+    this.draw()
   }
 
-  async init() {
-    const { uid, app, position = [], isMe, direction } = this.options
+  async draw() {
+    const { uid, app, position = [0, 0, 0], isMe, direction } = this.options
     await loadTextures()
-    // 文字
-    const text = new PIXI.Text(uid, {
-      fontFamily: '-apple-system,BlinkMacSystemFont,Segoe UI,Roboto',
+    this.nameText.text = uid
+    this.nameText.style = {
       fontSize: 12,
       fill: "white",
       align: 'center',
-    });
-    text.position.x = 0;
-    text.position.y = 0;
+    }
+    // 文字
+    this.nameText.height = DEFAULT_NAME_HEIGHT
+    this.nameText.position.x = 0;
+    this.nameText.position.y = 0;
     // 文字背景
     const textBackround = new PIXI.Graphics();
     textBackround.beginFill(isMe ? "#eb2f96" : "#bae0ff");
-    textBackround.drawRect(0, 0, text.width, text.height);
+    textBackround.drawRect(0, 0, this.nameText.width, this.nameText.height);
     textBackround.endFill();
-    // 人物
+    // 人物 avatar
     this._transDirection(direction || "down")
-    this.personSprite.position.y = text.height;
-    this.personSprite.position.x = (text.width - PERSON_WIDTH) / 2;
-    this.personSprite.width = PERSON_WIDTH;
-    this.personSprite.height = PERSON_HEIGHT;
-    // r1
-    // if (isMe && r1) {
-    //   this.circle1 = new PIXI.Graphics();
-    //   this._updateR1(r1)
-    // }
-    // // r2
-    // if (isMe && r2) {
-    //   this.circle2 = new PIXI.Graphics();
-    //   this._updateR2(r2)
-    // }
-    // 容器
-    this.circle2 && this.personContainer.addChild(this.circle2)
-    this.circle1 && this.personContainer.addChild(this.circle1)
+    this.personSprite.position.y = this.nameText.height;
+    this.personSprite.position.x = (this.nameText.width - DEFAULT_AVATAR_WIDTH) / 2;
+    this.personSprite.width = DEFAULT_AVATAR_WIDTH;
+    this.personSprite.height = DEFAULT_AVATAR_HEIGHT;
+    // 人物包裹器
     this.personContainer.addChild(textBackround)
-    this.personContainer.addChild(text);
+    this.personContainer.addChild(this.nameText);
     this.personContainer.addChild(this.personSprite);
-    this.personContainer.position.x = position[0] || 0
-    this.personContainer.position.y = position[1] || 0
+    // 计算位置
+    let renderPosition = this._trans2RenderPosition(position)
+    this.personContainer.position.x = renderPosition[0]
+    this.personContainer.position.y = renderPosition[1]
     app!.stage.addChild(this.personContainer);
   }
 
   update(options: IPersonUpdateOptions) {
     const { position, direction } = options
-    if (position && position != this.options.position) {
-      this.runTo(position[0], position[1])
+    if (position) {
+      this.runTo(position)
       this.options.position = position
     }
-    if (direction && direction != this.options.direction) {
+    if (direction) {
       this._transDirection(direction)
     }
-    // if (r1 && r1 != this.options.r1) {
-    //   this._updateR1(r1)
-    // }
-    // if (r2 && r2 != this.options.r2) {
-    //   this._updateR2(r2)
-    // }
+    if (this.scale) {
+      this._setScale(this.scale)
+    }
   }
 
 
-  runTo(x: number, y: number) {
+  runTo(p: Position) {
     if (this.personContainer) {
+      const renderPosition = this._trans2RenderPosition(p)
+      const [x, y] = renderPosition
       gsap.to(this.personContainer, { x: x, y: y, duration: 0.5, ease: "power3" });
     }
   }
@@ -94,12 +84,8 @@ export class Person {
   destory() {
     this.personContainer.destroy()
     this.personSprite.destroy()
-    this.circle1?.destroy()
-    this.circle2?.destroy()
     this.personContainer = null as any
     this.personSprite = null as any
-    this.circle1 = null as any
-    this.circle2 = null as any
   }
 
   // -------------------- private --------------------
@@ -129,6 +115,20 @@ export class Person {
     this.options.direction = d
   }
 
+  private _trans2RenderPosition(p: Position) {
+    // 计算位置
+    let x = p[0] || 0
+    let y = p[1] || 0
+    let positionX = x - (this.nameText?.width || 0) / 2
+    let positionY = y - (this.nameText?.height || 0) - (this.personSprite.height / 2)
+    return [positionX, positionY, p[2]]
+  }
+
+  private _setScale(scale: number) {
+    this.scale = this.scale
+    this.personContainer.scale.set(this.scale, this.scale)
+    // this.personContainer.render()
+  }
 
 }
 

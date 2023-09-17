@@ -41,9 +41,9 @@ const LoginPage = () => {
 
   const onTypeChange = (e: RadioChangeEvent) => {
     const value = e.target.value;
-    if (value == RenderType.Canvas) {
-      message.info("Canvas mode is not supported yet")
-    }
+    // if (value == RenderType.Canvas) {
+    //   message.info("Canvas mode is not supported yet")
+    // }
     setRenderType(value);
   }
 
@@ -57,8 +57,8 @@ const LoginPage = () => {
       <Input placeholder="Please input worldId" onChange={onChangeWorldId} value={worldId}></Input>
       <div className="text">render mode: </div>
       <Radio.Group onChange={onTypeChange} value={renderType}>
-        <Radio value={RenderType.Dom}>Dom</Radio>
         <Radio value={RenderType.Canvas}>Canvas</Radio>
+        <Radio value={RenderType.Dom}>Dom</Radio>
       </Radio.Group>
       <div className="btn-wrapper">
         <Button className="btn" type="primary" onClick={onClick}>Join</Button>

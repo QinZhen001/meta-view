@@ -12,7 +12,7 @@ let renderer: Renderer | null = null
 const MapDomView = () => {
   useScreenResize()
   useDirectionKeydown()
-  const { bgPositionX, bgPositionY, mapWidth, mapHeight } = useMap()
+  const { bgPositionX, bgPositionY, mapWidth, mapHeight, scale } = useMap()
   const position = useSelector((state: RootState) => state.globalInfo.position);
   const remoteUserPayloads = useSelector((state: RootState) => state.globalInfo.remoteUserPayloads);
   const direction = useSelector((state: RootState) => state.globalInfo.direction);
@@ -26,7 +26,7 @@ const MapDomView = () => {
       width: mapWidth,
       height: mapHeight,
     })
-    renderer.init()
+    renderer.drawBG()
 
     return () => {
       renderer?.destory()
@@ -36,13 +36,14 @@ const MapDomView = () => {
 
   useEffect(() => {
     if (renderer) {
+      console.log("[mate] resize", mapWidth, mapHeight, scale)
       renderer.resize(mapWidth, mapHeight)
     }
-  }, [mapWidth, mapHeight])
+  }, [mapWidth, mapHeight, renderer, scale])
 
   useEffect(() => {
     if (renderer) {
-      renderer.drawPerson({
+      renderer.drawMe({
         uid,
         position,
         direction,

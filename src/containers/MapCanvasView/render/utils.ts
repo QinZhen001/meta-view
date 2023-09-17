@@ -7,7 +7,11 @@ PIXI.Assets.add("right", "/assets/avatar_right.png")
 
 let __textures = new Map<string, PIXI.Texture>()
 
+// TODO: reduce load times
+// let hasLoaded = false
+
 export const loadTextures = async () => {
+  const start = Date.now()
   await PIXI.Assets.load(["down", "up", "left", "right"])
   const downTexture = PIXI.Texture.from('down');
   const upTexture = PIXI.Texture.from('up');
@@ -17,6 +21,8 @@ export const loadTextures = async () => {
   __textures.set("up", upTexture)
   __textures.set("left", leftTexture)
   __textures.set("right", rightTexture)
+  const end = Date.now()
+  console.log("[mate] loadTextures time", end - start, "ms")
 }
 
 

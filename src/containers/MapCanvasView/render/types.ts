@@ -9,12 +9,17 @@ export interface IRenderOptions {
   leaveRoom?: (id: string) => boolean | Promise<boolean>
 }
 
+
 export interface IPersonOptions {
-  uid: string | number
-  position?: Position;
-  direction?: Direction;
+  uid?: string | number
   isMe?: boolean;
   app?: PIXI.Application;
+}
+
+export interface IPersonDrawOptions {
+  uid?: string | number
+  position?: Position;
+  direction?: Direction;
 }
 
 export interface IPersonUpdateOptions {

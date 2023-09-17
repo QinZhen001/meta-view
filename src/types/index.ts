@@ -6,7 +6,7 @@ export type Direction = "up" | "down" | "left" | "right";
 
 
 export interface UserPayload {
-  uid: string | number,
+  uid?: string | number,
   position?: Position
   direction?: Direction
 }

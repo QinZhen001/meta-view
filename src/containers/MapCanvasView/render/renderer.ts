@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { Person } from './person';
-import { IRenderOptions, IPersonOptions, IPersonUpdateOptions, RemoteUserPayloads, InOutEvents, EventHandler } from "./types"
+import { IRenderOptions, IPersonOptions, IPersonDrawOptions, InOutEvents, EventHandler } from "./types"
 import mitt from 'mitt'
 
 
@@ -10,7 +10,8 @@ import mitt from 'mitt'
 
 export class Renderer {
   options: IRenderOptions
-  othersPerson: Map<string, Person> = new Map()
+  // TODO: remoteUsers
+  remoteUsers: Map<string, Person> = new Map()
   mePerson?: Person
   BgSprite?: PIXI.Sprite
   app: PIXI.Application
@@ -34,7 +35,11 @@ export class Renderer {
     node.appendChild(this.app.view);
   }
 
+  get hasMe() {
+    return !!this.mePerson
+  }
 
+  // -------------- public methods --------------
 
   resize(width: number, height: number, scale?: number) {
     // canvas的宽高
@@ -44,10 +49,12 @@ export class Renderer {
     this.app.screen.width = width
     this.app.screen.height = height
     this.drawBG()
-    if(scale){
-      if(this.mePerson){
-        this.mePerson.update({scale})
+    if (scale) {
+      // me
+      if (this.mePerson) {
+        this.mePerson.update({ scale })
       }
+      // remote users
     }
   }
 
@@ -63,19 +70,46 @@ export class Renderer {
 
   }
 
-  drawMe(options: IPersonOptions) {
-    if (!this.mePerson) {
+
+
+  drawMe(o: IPersonDrawOptions) {
+    const { uid, position, direction } = o
+    if (!this.hasMe) {
       this.mePerson = new Person({
-        ...options,
+        uid,
+        isMe: true,
         app: this.app
       })
+      this.mePerson.draw({
+        position,
+        direction
+      })
     } else {
-      this.mePerson.update(options)
+      this.mePerson?.update({
+        position,
+        direction
+      })
     }
   }
 
 
-  drawPerson() { }
+  drawRemoteUsers(remoteUsers: {
+    [uid: string]: IPersonDrawOptions
+  }) {
+    if(!this.remoteUsers.size){
+      Object.keys(remoteUsers).forEach(uid => {
+        const person = new Person({
+          uid,
+          isMe:false,
+          app: this.app
+        })
+        this.remoteUsers.set(uid, person)
+        person.draw(remoteUsers[uid])
+      })
+    }else{
+
+    }
+  }
 
   on<Key extends keyof InOutEvents>(type: Key, handler: EventHandler<InOutEvents[Key]>) {
     return this._emitter.on(type, handler)
@@ -93,6 +127,13 @@ export class Renderer {
 
 
 
+  _createPerson(options: IPersonOptions) {
+    if (options.isMe) {
+      // 
+    } else {
+
+    }
+  }
 
 
 

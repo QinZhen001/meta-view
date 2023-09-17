@@ -8,6 +8,7 @@ import "./index.scss"
 let renderer: Renderer | null = null
 
 
+
 // render with canvas (pixi.js in webgl) 
 const MapDomView = () => {
   useScreenResize()
@@ -26,6 +27,8 @@ const MapDomView = () => {
       width: mapWidth,
       height: mapHeight,
     })
+    // @ts-ignore
+    window.renderer = renderer
     renderer.drawBG()
 
     return () => {
@@ -37,7 +40,7 @@ const MapDomView = () => {
   useEffect(() => {
     if (renderer) {
       console.log("[mate] resize", mapWidth, mapHeight, scale)
-      renderer.resize(mapWidth, mapHeight)
+      renderer.resize(mapWidth, mapHeight, scale)
     }
   }, [mapWidth, mapHeight, renderer, scale])
 
@@ -47,10 +50,16 @@ const MapDomView = () => {
         uid,
         position,
         direction,
-        isMe: true,
       })
     }
   }, [uid, direction, position])
+
+
+  useEffect(() => {
+    if (renderer) {
+      renderer.drawRemoteUsers(remoteUserPayloads)
+    }
+  }, [remoteUserPayloads])
 
   return <div className="map-view">
     <div className="map-content" ref={mapRef} style={{

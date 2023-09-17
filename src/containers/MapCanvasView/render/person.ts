@@ -1,7 +1,7 @@
 import { Position } from './../../../types/index';
 import { Direction } from '../../../types/index';
 import { getTextures, loadTextures } from './utils';
-import { IPersonOptions, IPersonUpdateOptions } from "./types"
+import { IPersonOptions, IPersonUpdateOptions, IPersonDrawOptions } from "./types"
 import { DEFAULT_AVATAR_WIDTH, DEFAULT_AVATAR_HEIGHT, DEFAULT_NAME_HEIGHT } from "../../../utils/constant"
 import * as PIXI from 'pixi.js';
 import gsap from "gsap"
@@ -20,11 +20,20 @@ export class Person {
 
   constructor(options: IPersonOptions) {
     this.options = options;
-    this.draw()
+    // const {}
+    // if(position){
+
+    // }
+    // this.draw({
+    //   position,
+    //   direction
+    // })
   }
 
-  async draw() {
-    const { uid, app, position = [0, 0, 0], isMe, direction } = this.options
+  // TODO:scale
+  async draw(o: IPersonDrawOptions) {
+    const { uid = "", app, isMe, } = this.options
+    const { position = [0, 0, 0], direction = "down" } = o
     await loadTextures()
     this.nameText.text = uid
     this.nameText.style = {
@@ -125,9 +134,9 @@ export class Person {
   }
 
   private _setScale(scale: number) {
-    this.scale = this.scale
-    this.personContainer.scale.set(this.scale, this.scale)
-    // this.personContainer.render()
+    this.scale = scale
+    this.personContainer.scale.set(this.scale)
+    console.log("[meta] this.scale", this.scale)
   }
 
 }

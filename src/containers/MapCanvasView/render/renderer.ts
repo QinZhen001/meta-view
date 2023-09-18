@@ -1,8 +1,21 @@
 import * as PIXI from 'pixi.js';
 import { Person } from './person';
 import { IRenderOptions, IPersonOptions, IPersonDrawOptions, InOutEvents, EventHandler } from "./types"
+import { loadTextures } from "./utils"
 import mitt from 'mitt'
 
+
+
+interface IResizeOptions extends IDrawBGOptions {
+  width: number,
+  height: number,
+  scale?: number,
+}
+
+interface IDrawBGOptions {
+  offsetX?: number,
+  offsetY?: number
+}
 
 // TODO:
 // status renderer 状态改变
@@ -41,24 +54,31 @@ export class Renderer {
 
   // -------------- public methods --------------
 
-  resize(width: number, height: number, scale?: number) {
+  resize({
+    width,
+    height,
+    scale,
+    offsetX,
+    offsetY
+  }: IResizeOptions) {
+    this.scale = scale || this.scale
     // canvas的宽高
     this.app.view.width = width
     this.app.view.height = height
     // 渲染器的宽高
     this.app.screen.width = width
     this.app.screen.height = height
-    this.drawBG()
-    if (scale) {
-      // me
-      if (this.mePerson) {
-        this.mePerson.update({ scale })
-      }
-      // remote users
-    }
+    this.drawBG({
+      offsetX,
+      offsetY
+    })
+    this.drawMe()
   }
 
-  drawBG() {
+  drawBG({
+    offsetX = 0,
+    offsetY = 0
+  }: IDrawBGOptions = {}) {
     if (!this.BgSprite) {
       const texture = PIXI.Texture.from('./map.jpeg');
       this.BgSprite = new PIXI.Sprite(texture)
@@ -67,46 +87,43 @@ export class Renderer {
     this.BgSprite.position.set(0, 0);
     this.BgSprite.width = this.app.view.width;
     this.BgSprite.height = this.app.view.height;
-
+    this.BgSprite.x = offsetX
+    this.BgSprite.y = offsetY
+    console.log("[meta] drawBG", offsetX, offsetY)
   }
 
 
 
-  drawMe(o: IPersonDrawOptions) {
-    const { uid, position, direction } = o
+  drawMe(o: IPersonDrawOptions = {}) {
+    const { uid = "", position, direction } = o
     if (!this.hasMe) {
       this.mePerson = new Person({
-        uid,
         isMe: true,
         app: this.app
       })
-      this.mePerson.draw({
-        position,
-        direction
-      })
-    } else {
-      this.mePerson?.update({
-        position,
-        direction
-      })
     }
+    this?.mePerson?.draw({
+      uid,
+      position,
+      direction,
+      scale: this.scale
+    })
   }
 
 
   drawRemoteUsers(remoteUsers: {
     [uid: string]: IPersonDrawOptions
   }) {
-    if(!this.remoteUsers.size){
+    if (!this.remoteUsers.size) {
       Object.keys(remoteUsers).forEach(uid => {
         const person = new Person({
-          uid,
-          isMe:false,
+          isMe: false,
           app: this.app
         })
         this.remoteUsers.set(uid, person)
         person.draw(remoteUsers[uid])
       })
-    }else{
+    } else {
 
     }
   }

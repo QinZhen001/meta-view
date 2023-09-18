@@ -1,8 +1,8 @@
 import { Position } from './../../../types/index';
 import { Direction } from '../../../types/index';
 import { getTextures, loadTextures } from './utils';
-import { IPersonOptions, IPersonUpdateOptions, IPersonDrawOptions } from "./types"
-import { DEFAULT_AVATAR_WIDTH, DEFAULT_AVATAR_HEIGHT, DEFAULT_NAME_HEIGHT } from "../../../utils/constant"
+import { IPersonOptions, IPersonDrawOptions } from "./types"
+import { DEFAULT_AVATAR_WIDTH, DEFAULT_AVATAR_HEIGHT, DEFAULT_NAME_HEIGHT, DEFAULT_NAME_WIDTH, DEFAULT_FIGURE_WIDTH } from "../../../utils/constant"
 import * as PIXI from 'pixi.js';
 import gsap from "gsap"
 
@@ -19,18 +19,32 @@ export class Person {
   scale: number = 1
   direction: Direction = "down"
   position: Position = [0, 0, 0]
-  // TODO: inited => 
+  uid: string = ""
+  inited: boolean = false
+
 
   constructor(options: IPersonOptions) {
     this.options = options;
+
   }
 
-  // TODO: direction position to this 
   async draw(o: IPersonDrawOptions) {
-    const { uid = "", app, isMe, } = this.options
-    const { position = [0, 0, 0], direction = "down" } = o
-    await loadTextures()
-    this.nameText.text = uid
+    let { app, isMe, } = this.options
+    let { position, direction, scale, uid } = o
+    if (position) {
+      this.position = position
+    }
+    if (direction) {
+      this.direction = direction
+    }
+    if (scale) {
+      this.scale = scale
+    }
+    if (uid) {
+      this.uid = uid
+    }
+    console.log("[meta] draw people", this.position, this.direction, this.scale)
+    this.nameText.text = this.uid
     this.nameText.style = {
       fontSize: 12,
       fill: "white",
@@ -38,6 +52,7 @@ export class Person {
     }
     // 文字
     this.nameText.height = DEFAULT_NAME_HEIGHT
+    this.nameText.width = DEFAULT_NAME_WIDTH
     this.nameText.position.x = 0;
     this.nameText.position.y = 0;
     // 文字背景
@@ -46,35 +61,26 @@ export class Person {
     textBackround.drawRect(0, 0, this.nameText.width, this.nameText.height);
     textBackround.endFill();
     // 人物 avatar
-    this._transDirection(direction || "down")
-    this.personSprite.position.y = this.nameText.height;
-    this.personSprite.position.x = (this.nameText.width - DEFAULT_AVATAR_WIDTH) / 2;
+    await this._transDirection(this.direction)
+
     this.personSprite.width = DEFAULT_AVATAR_WIDTH;
     this.personSprite.height = DEFAULT_AVATAR_HEIGHT;
+    this.personSprite.position.x = (this.nameText.width - this.personSprite.width) / 2;
+    this.personSprite.position.y = this.nameText.height;
+
     // 人物包裹器
     this.personContainer.addChild(textBackround)
     this.personContainer.addChild(this.nameText);
     this.personContainer.addChild(this.personSprite);
     // 计算位置
-    let renderPosition = this._trans2RenderPosition(position)
+    let renderPosition = this._trans2RenderPosition(this.position)
     this.personContainer.position.x = renderPosition[0]
     this.personContainer.position.y = renderPosition[1]
-    // TODO: if inited we should not add it again
-    app!.stage.addChild(this.personContainer);
-  }
-
-  update(options: IPersonUpdateOptions) {
-    const { position, direction } = options
-    if (position) {
-      this.runTo(position)
-      // this.options.position = position
+    this.personContainer.width = DEFAULT_FIGURE_WIDTH * this.scale
+    if (!this.inited) {
+      app!.stage.addChild(this.personContainer);
     }
-    if (direction) {
-      this._transDirection(direction)
-    }
-    if (this.scale) {
-      this._setScale(this.scale)
-    }
+    this.inited = true
   }
 
 
@@ -82,7 +88,8 @@ export class Person {
     if (this.personContainer) {
       const renderPosition = this._trans2RenderPosition(p)
       const [x, y] = renderPosition
-      gsap.to(this.personContainer, { x: x, y: y, duration: 0.5, ease: "power3" });
+      this.position = [x, y, 0]
+      gsap.to(this.personContainer, { x: x, y: y, duration: 2, ease: "power3" });
     }
   }
 
@@ -96,8 +103,8 @@ export class Person {
   // -------------------- private --------------------
 
 
-  private _transDirection(d: Direction) {
-    let textures = getTextures()
+  private async _transDirection(d: Direction) {
+    let textures = await getTextures()
     let texture = undefined
     switch (d) {
       case "up":
@@ -117,7 +124,7 @@ export class Person {
         this.personSprite.texture = texture;
         break
     }
-    // this.options.direction = d
+    this.direction = d
   }
 
   private _trans2RenderPosition(p: Position) {
@@ -126,14 +133,10 @@ export class Person {
     let y = p[1] || 0
     let positionX = x - (this.nameText?.width || 0) / 2
     let positionY = y - (this.nameText?.height || 0) - (this.personSprite.height / 2)
-    return [positionX, positionY, p[2]]
+
+    return [positionX, positionY, 0]
   }
 
-  private _setScale(scale: number) {
-    this.scale = scale
-    this.personContainer.scale.set(this.scale)
-    console.log("[meta] this.scale", this.scale)
-  }
 
 }
 

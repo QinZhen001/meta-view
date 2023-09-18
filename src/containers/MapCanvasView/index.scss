@@ -8,13 +8,11 @@
   background: #303032;
   z-index: -1;
 
+  // 定位于左上角
   .map-content {
     position: relative;
-    // background-image: url("../../assets/map.jpeg");
-    // background-repeat: no-repeat;
-    // background-position: 0 0;
-    // background-size: cover;
-    // transition: background-position 0.2s ease;
-    // will-change: background-position;
+    // left: 0;
+    // top: 0;
+    overflow: hidden;
   }
 }

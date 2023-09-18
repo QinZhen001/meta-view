@@ -330,6 +330,7 @@ export const useMap = () => {
         if (x > centerX) {
           bgPositionX = centerX - x // 负值
           bgPositionX = bgPositionX <= max ? max : bgPositionX
+          console.log("max111", max)
         }
       }
       // 当地图的高 > 页面高时 需要背景移动 

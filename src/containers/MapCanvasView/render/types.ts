@@ -11,18 +11,12 @@ export interface IRenderOptions {
 
 
 export interface IPersonOptions {
-  uid?: string | number
   isMe?: boolean;
   app?: PIXI.Application;
 }
 
 export interface IPersonDrawOptions {
-  uid?: string | number
-  position?: Position;
-  direction?: Direction;
-}
-
-export interface IPersonUpdateOptions {
+  uid?: string
   position?: Position;
   direction?: Direction;
   scale?: number

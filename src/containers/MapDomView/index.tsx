@@ -9,6 +9,8 @@ const MapDomView = () => {
   useScreenResize()
   useDirectionKeydown()
   const { bgPositionX, bgPositionY, mapWidth, mapHeight } = useMap()
+
+  console.log("bgPositionX",bgPositionX)
   
   return <div className="map-view">
     <div className="map-content" style={{

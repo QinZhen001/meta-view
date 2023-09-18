@@ -17,9 +17,10 @@ const MapDomView = () => {
   const position = useSelector((state: RootState) => state.globalInfo.position);
   const remoteUserPayloads = useSelector((state: RootState) => state.globalInfo.remoteUserPayloads);
   const direction = useSelector((state: RootState) => state.globalInfo.direction);
-  const { uid } = useSelector((state: RootState) => state.globalInfo.info);
-
+  const { uid = "" } = useSelector((state: RootState) => state.globalInfo.info);
   const mapRef = useRef<HTMLDivElement>(null)
+
+  console.log("bgPositionX",bgPositionX)
 
   useLayoutEffect(() => {
     renderer = new Renderer({
@@ -39,15 +40,24 @@ const MapDomView = () => {
 
   useEffect(() => {
     if (renderer) {
-      console.log("[mate] resize", mapWidth, mapHeight, scale)
-      renderer.resize(mapWidth, mapHeight, scale)
+      console.log("[meta] resize", mapWidth, mapHeight, scale, bgPositionX, bgPositionY)
+      renderer.resize({
+        width: mapWidth,
+        height: mapHeight,
+        offsetX: bgPositionX,
+        offsetY: bgPositionY,
+        scale,
+      })
     }
-  }, [mapWidth, mapHeight, renderer, scale])
+  }, [mapWidth, mapHeight, renderer, scale, bgPositionX, bgPositionY])
+
+
+
 
   useEffect(() => {
     if (renderer) {
       renderer.drawMe({
-        uid,
+        uid: uid.toString(),
         position,
         direction,
       })
@@ -57,7 +67,7 @@ const MapDomView = () => {
 
   useEffect(() => {
     if (renderer) {
-      renderer.drawRemoteUsers(remoteUserPayloads)
+      // renderer.drawRemoteUsers(remoteUserPayloads)
     }
   }, [remoteUserPayloads])
 
@@ -65,7 +75,6 @@ const MapDomView = () => {
     <div className="map-content" ref={mapRef} style={{
       width: `${mapWidth}px`,
       height: `${mapHeight}px`,
-      backgroundPosition: `${bgPositionX}px ${bgPositionY}px`,
     }}></div>
   </div>
 }

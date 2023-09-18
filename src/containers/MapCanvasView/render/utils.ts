@@ -22,10 +22,14 @@ export const loadTextures = async () => {
   __textures.set("left", leftTexture)
   __textures.set("right", rightTexture)
   const end = Date.now()
-  console.log("[mate] loadTextures time", end - start, "ms")
+  console.log("[meta] loadTextures time", end - start, "ms")
 }
 
 
-export const getTextures = () => {
+export const getTextures = async () => {
+  if (__textures.size) {
+    return __textures
+  }
+  await loadTextures()
   return __textures
 }

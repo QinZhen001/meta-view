@@ -51,8 +51,8 @@ export const useDirectionKeydown = () => {
 
   const isInMap = useCallback((p: Position) => {
     let [x, y, z] = p
-    x = x * scale
-    y = y * scale
+    x = x
+    y = y
     const offset = 5
     if (x <= 0 + offset || x >= mapWidth - offset || y <= 0 + offset || y >= mapHeight - offset) {
       return false
@@ -317,42 +317,32 @@ export const useMap = () => {
   mapWidth = Math.floor(mapWidth)
   mapHeight = Math.floor(mapHeight)
 
-  const { bgPositionX, bgPositionY } = useMemo(() => {
-    let [x, y] = position
-    // bgPositionX/bgPositionY 均需要负值
-    let bgPositionX = 0
-    let bgPositionY = 0
-    if (pageHeight && mapHeight) {
-      // 当地图的宽 > 页面宽时 需要背景移动 
-      if (pageWidth < mapWidth) {
-        let centerX = pageWidth / 2 // 到达 centerX 时背景开始移动
-        let max = -(mapWidth - pageWidth) // 负值
-        if (x > centerX) {
-          bgPositionX = centerX - x // 负值
-          bgPositionX = bgPositionX <= max ? max : bgPositionX
-          console.log("max111", max)
-        }
-      }
-      // 当地图的高 > 页面高时 需要背景移动 
-      if (pageHeight < mapHeight) {
-        let centerY = pageHeight / 2 // 到达 centerY 时背景开始移动
-        let max = -(mapHeight - pageHeight) / 2 // 负值
-        bgPositionY = -max
-        if (y > centerY) {
-          const dis = centerY - y// 负值
-          bgPositionY = bgPositionY + dis
-          bgPositionY = bgPositionY <= max ? max : bgPositionY
-        }
+  let [x, y] = position
+  // bgPositionX/bgPositionY 均需要负值
+  let bgPositionX = 0
+  let bgPositionY = 0
+  if (pageHeight && mapHeight) {
+    // 当地图的宽 > 页面宽时 需要背景移动 
+    if (pageWidth < mapWidth) {
+      let centerX = pageWidth / 2 // 到达 centerX 时背景开始移动
+      let max = -(mapWidth - pageWidth) // 负值
+      if (x > centerX) {
+        bgPositionX = centerX - x // 负值
+        bgPositionX = bgPositionX <= max ? max : bgPositionX
       }
     }
-
-    return {
-      bgPositionX,
-      bgPositionY
+    // 当地图的高 > 页面高时 需要背景移动 
+    if (pageHeight < mapHeight) {
+      let centerY = pageHeight / 2 // 到达 centerY 时背景开始移动
+      let max = -(mapHeight - pageHeight) / 2 // 负值
+      bgPositionY = -max
+      if (y > centerY) {
+        const dis = centerY - y// 负值
+        bgPositionY = bgPositionY + dis
+        bgPositionY = bgPositionY <= max ? max : bgPositionY
+      }
     }
-
-  }, [mapWidth, mapHeight, position, pageWidth, pageHeight])
-
+  }
 
 
   return {

@@ -10,6 +10,8 @@ let __textures = new Map<string, PIXI.Texture>()
 // TODO: reduce load times
 // let hasLoaded = false
 
+// PIXI.utilize.TextureCache
+
 export const loadTextures = async () => {
   const start = Date.now()
   await PIXI.Assets.load(["down", "up", "left", "right"])

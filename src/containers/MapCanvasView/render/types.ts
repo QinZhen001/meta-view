@@ -20,6 +20,8 @@ export interface IPersonDrawOptions {
   position?: Position;
   direction?: Direction;
   scale?: number
+  offsetX?: number
+  offsetY?: number
 }
 
 export interface RemoteUserPayloads {

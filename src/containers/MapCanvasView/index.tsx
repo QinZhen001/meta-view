@@ -1,7 +1,7 @@
 import { useMap, useScreenResize, useDirectionKeydown } from "../../utils/hooks"
 import { useEffect, useLayoutEffect, useRef } from "react"
 import { useSelector } from "react-redux"
-import { Renderer } from "./render"
+import { Renderer, IPersonDrawOptions } from "./render"
 import { RootState } from "../../store"
 import "./index.scss"
 
@@ -19,8 +19,6 @@ const MapDomView = () => {
   const direction = useSelector((state: RootState) => state.globalInfo.direction);
   const { uid = "" } = useSelector((state: RootState) => state.globalInfo.info);
   const mapRef = useRef<HTMLDivElement>(null)
-
-  console.log("bgPositionX",bgPositionX)
 
   useLayoutEffect(() => {
     renderer = new Renderer({
@@ -49,25 +47,30 @@ const MapDomView = () => {
         scale,
       })
     }
-  }, [mapWidth, mapHeight, renderer, scale, bgPositionX, bgPositionY])
+  }, [mapWidth, mapHeight, scale, bgPositionX, bgPositionY])
 
 
 
 
   useEffect(() => {
-    if (renderer) {
+    if (renderer ) {
+      console.log("[meta] drawMe", uid, position, direction)
       renderer.drawMe({
         uid: uid.toString(),
         position,
         direction,
+        offsetX: bgPositionX,
+        offsetY: bgPositionY,
       })
     }
-  }, [uid, direction, position])
+  }, [uid, direction, position, bgPositionX, bgPositionY])
 
 
   useEffect(() => {
     if (renderer) {
-      // renderer.drawRemoteUsers(remoteUserPayloads)
+      renderer.drawRemoteUsers(remoteUserPayloads as {
+        [uid: string]: IPersonDrawOptions
+      })
     }
   }, [remoteUserPayloads])
 

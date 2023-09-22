@@ -21,6 +21,8 @@ export class Person {
   position: Position = [0, 0, 0]
   uid: string = ""
   inited: boolean = false
+  offsetX: number = 0
+  offsetY: number = 0
 
 
   constructor(options: IPersonOptions) {
@@ -30,7 +32,7 @@ export class Person {
 
   async draw(o: IPersonDrawOptions) {
     let { app, isMe, } = this.options
-    let { position, direction, scale, uid } = o
+    let { position, direction, scale, uid, offsetX, offsetY } = o
     if (position) {
       this.position = position
     }
@@ -43,7 +45,12 @@ export class Person {
     if (uid) {
       this.uid = uid
     }
-    console.log("[meta] draw people", this.position, this.direction, this.scale)
+    if (offsetX) {
+      this.offsetX = offsetX
+    }
+    if (offsetY) {
+      this.offsetY = offsetY
+    }
     this.nameText.text = this.uid
     this.nameText.style = {
       fontSize: 12,
@@ -62,35 +69,38 @@ export class Person {
     textBackround.endFill();
     // 人物 avatar
     await this._transDirection(this.direction)
-
     this.personSprite.width = DEFAULT_AVATAR_WIDTH;
     this.personSprite.height = DEFAULT_AVATAR_HEIGHT;
     this.personSprite.position.x = (this.nameText.width - this.personSprite.width) / 2;
     this.personSprite.position.y = this.nameText.height;
-
     // 人物包裹器
     this.personContainer.addChild(textBackround)
     this.personContainer.addChild(this.nameText);
     this.personContainer.addChild(this.personSprite);
     // 计算位置
-    let renderPosition = this._trans2RenderPosition(this.position)
-    this.personContainer.position.x = renderPosition[0]
-    this.personContainer.position.y = renderPosition[1]
-    this.personContainer.width = DEFAULT_FIGURE_WIDTH * this.scale
+    this.position = this._trans2RenderPosition(this.position)
+    this.personContainer.width = DEFAULT_FIGURE_WIDTH
+
+    this.personContainer.pivot.x = this.personContainer.width / 2
+    this.personContainer.pivot.y = this.personContainer.height / 2
+
     if (!this.inited) {
+      this.personContainer.position.x = this.position[0]
+      this.personContainer.position.y = this.position[1]
       app!.stage.addChild(this.personContainer);
+    } else {
+      this.run()
     }
     this.inited = true
+
   }
 
+  // 
 
-  runTo(p: Position) {
-    if (this.personContainer) {
-      const renderPosition = this._trans2RenderPosition(p)
-      const [x, y] = renderPosition
-      this.position = [x, y, 0]
-      gsap.to(this.personContainer, { x: x, y: y, duration: 2, ease: "power3" });
-    }
+  // run to current position
+  run() {
+    const [x, y] = this.position
+    gsap.to(this.personContainer, { x: x, y: y, duration: 0.5, ease: "none" });
   }
 
   destory() {
@@ -127,13 +137,15 @@ export class Person {
     this.direction = d
   }
 
-  private _trans2RenderPosition(p: Position) {
+  private _trans2RenderPosition(p: Position): Position {
     // 计算位置
     let x = p[0] || 0
     let y = p[1] || 0
     let positionX = x - (this.nameText?.width || 0) / 2
     let positionY = y - (this.nameText?.height || 0) - (this.personSprite.height / 2)
-
+    // 处理 offset
+    positionX += this.offsetX
+    positionY += this.offsetY
     return [positionX, positionY, 0]
   }
 

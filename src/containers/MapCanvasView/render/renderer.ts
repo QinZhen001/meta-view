@@ -55,11 +55,7 @@ export class Renderer {
   // -------------- public methods --------------
 
   resize({
-    width,
-    height,
-    scale,
-    offsetX,
-    offsetY
+    width, height, scale, offsetX, offsetY
   }: IResizeOptions) {
     this.scale = scale || this.scale
     // canvas的宽高
@@ -72,7 +68,18 @@ export class Renderer {
       offsetX,
       offsetY
     })
-    this.drawMe()
+    if (this.hasMe) {
+      this.drawMe({
+        offsetX,
+        offsetY
+      })
+    }
+    this.remoteUsers.forEach(person => {
+      person.draw({
+        offsetX,
+        offsetY
+      })
+    })
   }
 
   drawBG({
@@ -95,7 +102,7 @@ export class Renderer {
 
 
   drawMe(o: IPersonDrawOptions = {}) {
-    const { uid = "", position, direction } = o
+    const { uid = "", position, direction, offsetX, offsetY } = o
     if (!this.hasMe) {
       this.mePerson = new Person({
         isMe: true,
@@ -106,7 +113,9 @@ export class Renderer {
       uid,
       position,
       direction,
-      scale: this.scale
+      scale: this.scale,
+      offsetX: offsetX,
+      offsetY: offsetY
     })
   }
 
@@ -114,18 +123,32 @@ export class Renderer {
   drawRemoteUsers(remoteUsers: {
     [uid: string]: IPersonDrawOptions
   }) {
-    if (!this.remoteUsers.size) {
-      Object.keys(remoteUsers).forEach(uid => {
+    const oldRemoteUsers = this.remoteUsers
+    const newRemoteUsers = remoteUsers
+    Object.keys(newRemoteUsers).forEach(uid => {
+      if (!oldRemoteUsers.has(uid)) {
+        // 新增
         const person = new Person({
           isMe: false,
           app: this.app
         })
         this.remoteUsers.set(uid, person)
         person.draw(remoteUsers[uid])
-      })
-    } else {
+      } else {
+        // 更新
+        const person = this.remoteUsers.get(uid)!
+        person.draw(remoteUsers[uid])
+      }
+    })
+    // 删除
+    Object.keys(oldRemoteUsers).forEach(uid => {
+      if (!newRemoteUsers[uid]) {
+        const person = this.remoteUsers.get(uid)!
+        person.destory()
+        this.remoteUsers.delete(uid)
+      }
+    })
 
-    }
   }
 
   on<Key extends keyof InOutEvents>(type: Key, handler: EventHandler<InOutEvents[Key]>) {

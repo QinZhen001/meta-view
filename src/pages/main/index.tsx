@@ -13,7 +13,6 @@ const MainPage = () => {
   const { initPositionClient, joinPositionClient, destoryPositionClient } = usePositionClient()
   const { resetStore } = useStore()
 
-
   useEffect(() => {
     init()
     return () => {
